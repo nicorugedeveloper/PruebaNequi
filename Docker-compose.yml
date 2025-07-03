@@ -1,0 +1,37 @@
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nequi_network
+
+  prueba_nequi:
+    build: .
+    container_name: prueba_nequi
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql_db
+    environment:
+      SPRING_R2DBC_URL: ${SPRING_R2DBC_URL}
+      SPRING_R2DBC_USERNAME: ${SPRING_R2DBC_USERNAME}
+      SPRING_R2DBC_PASSWORD: ${SPRING_R2DBC_PASSWORD}
+    networks:
+      - nequi_network
+
+networks:
+  nequi_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
